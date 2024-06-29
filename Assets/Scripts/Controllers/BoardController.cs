@@ -261,6 +261,7 @@ public class BoardController : MonoBehaviour
 
     private IEnumerator ShuffleBoardCoroutine()
     {
+
         m_board.Shuffle();
 
         yield return new WaitForSeconds(0.3f);

@@ -304,18 +304,21 @@ public class Board
 
     internal eMatchDirection GetMatchDirection(List<Cell> matches)
     {
+        Debug.Log("match: " + matches.Count);
         if (matches == null || matches.Count < m_matchMin)
         {
            
             return eMatchDirection.NONE;
         }
         var listH = matches.Where(x => x.BoardX == matches[0].BoardX).ToList();
+        Debug.Log("listH: " + listH.Count);
         if (listH.Count == matches.Count)
         {
             return eMatchDirection.VERTICAL;
         }
 
         var listV = matches.Where(x => x.BoardY == matches[0].BoardY).ToList();
+        Debug.Log("listV: " + listV.Count);
         if (listV.Count == matches.Count)
         {
             return eMatchDirection.HORIZONTAL;

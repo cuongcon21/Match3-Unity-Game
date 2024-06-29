@@ -22,6 +22,7 @@ public class BonusItem : Item
 
     protected override void GetSpriteItems()
     {
+        Debug.Log(ItemType);
         if (VisualItem.GetSpriteBonusItem(ItemType))
         {
             i_visualItem = VisualItem.GetSpriteBonusItem(ItemType);

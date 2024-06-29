@@ -11,6 +11,9 @@ public class UIMainManager : MonoBehaviour
 
     private GameManager m_gameManager;
 
+    private GameManager.eLevelMode eLevelMode;
+
+
     private void Awake()
     {
         m_menuList = GetComponentsInChildren<IMenu>(true);
@@ -108,12 +111,28 @@ public class UIMainManager : MonoBehaviour
 
     internal void LoadLevelMoves()
     {
+        eLevelMode = GameManager.eLevelMode.MOVES;
         m_gameManager.LoadLevel(GameManager.eLevelMode.MOVES);
     }
 
     internal void LoadLevelTimer()
     {
+        eLevelMode = GameManager.eLevelMode.TIMER;
         m_gameManager.LoadLevel(GameManager.eLevelMode.TIMER);
+    }
+
+    internal void ReloadLeve()
+    {
+        m_gameManager.ClearLevel();
+        switch (eLevelMode)
+        {
+            case GameManager.eLevelMode.TIMER:
+                m_gameManager.LoadLevel(GameManager.eLevelMode.TIMER);
+                break;
+            case GameManager.eLevelMode.MOVES:
+                m_gameManager.LoadLevel(GameManager.eLevelMode.MOVES);
+                break;
+        }
     }
 
     internal void ShowGameMenu()
