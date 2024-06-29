@@ -25,7 +25,10 @@ public class Board
 
     private int m_matchMin;
 
-    public Board(Transform transform, GameSettings gameSettings)
+    private VisualItem m_visualItems;
+
+
+    public Board(Transform transform, GameSettings gameSettings, VisualItem visualItems)
     {
         m_root = transform;
 
@@ -36,18 +39,23 @@ public class Board
 
         m_cells = new Cell[boardSizeX, boardSizeY];
 
-        CreateBoard();
+        CreateBoard(transform);
+
+        m_visualItems = visualItems;
+    
     }
 
-    private void CreateBoard()
+    private void CreateBoard(Transform transform)
     {
         Vector3 origin = new Vector3(-boardSizeX * 0.5f + 0.5f, -boardSizeY * 0.5f + 0.5f, 0f);
-        GameObject prefabBG = Resources.Load<GameObject>(Constants.PREFAB_CELL_BACKGROUND);
+        //GameObject prefabBG = Resources.Load<GameObject>(Constants.PREFAB_CELL_BACKGROUND);
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
-                GameObject go = GameObject.Instantiate(prefabBG);
+                //Debug.Log("create");
+                //GameObject go = GameObject.Instantiate(prefabBG);
+                GameObject go = ObjectPool.Instance.Spawn(Constants.PREFAB_CELL_BACKGROUND);
                 go.transform.position = origin + new Vector3(x, y, 0f);
                 go.transform.SetParent(m_root);
 
@@ -71,7 +79,7 @@ public class Board
         }
 
     }
-
+    // set view items
     internal void Fill()
     {
         for (int x = 0; x < boardSizeX; x++)
@@ -101,7 +109,7 @@ public class Board
                 }
 
                 item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
-                item.SetView();
+                item.SetView(m_visualItems);
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
@@ -135,7 +143,7 @@ public class Board
         }
     }
 
-
+    // add items to boad when drag
     internal void FillGapsWithNewItems()
     {
         for (int x = 0; x < boardSizeX; x++)
@@ -148,7 +156,7 @@ public class Board
                 NormalItem item = new NormalItem();
 
                 item.SetType(Utils.GetRandomNormalType());
-                item.SetView();
+                item.SetView(m_visualItems);
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
@@ -168,6 +176,8 @@ public class Board
             }
         }
     }
+
+
 
     public void Swap(Cell cell1, Cell cell2, Action callback)
     {
@@ -282,7 +292,7 @@ public class Board
                 cellToConvert = matches[rnd];
             }
 
-            item.SetView();
+            item.SetView(m_visualItems);
             item.SetViewRoot(m_root);
 
             cellToConvert.Free();
@@ -294,8 +304,11 @@ public class Board
 
     internal eMatchDirection GetMatchDirection(List<Cell> matches)
     {
-        if (matches == null || matches.Count < m_matchMin) return eMatchDirection.NONE;
-
+        if (matches == null || matches.Count < m_matchMin)
+        {
+           
+            return eMatchDirection.NONE;
+        }
         var listH = matches.Where(x => x.BoardX == matches[0].BoardX).ToList();
         if (listH.Count == matches.Count)
         {
@@ -308,7 +321,7 @@ public class Board
             return eMatchDirection.HORIZONTAL;
         }
 
-        if (matches.Count > 5)
+        if (matches.Count >= 5)
         {
             return eMatchDirection.ALL;
         }
@@ -669,7 +682,8 @@ public class Board
                 Cell cell = m_cells[x, y];
                 cell.Clear();
 
-                GameObject.Destroy(cell.gameObject);
+                //GameObject.Destroy(cell.gameObject);
+                cell.gameObject.SetActive(false);
                 m_cells[x, y] = null;
             }
         }

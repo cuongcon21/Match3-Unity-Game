@@ -11,28 +11,37 @@ public class Item
 
     public Transform View { get; private set; }
 
+    public VisualItem VisualItem { get; private set; }
 
-    public virtual void SetView()
+    public Sprite i_visualItem;
+
+    public virtual void SetView(VisualItem visualItem)
     {
-        string prefabname = GetPrefabName();
-
-        if (!string.IsNullOrEmpty(prefabname))
+        if (visualItem)
         {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
-            if (prefab)
-            {
-                View = GameObject.Instantiate(prefab).transform;
-            }
+            VisualItem = visualItem;
+            GetSpriteItems();
         }
+        if(View == null)
+        {
+
+            View = ObjectPool.Instance.Spawn(Constants.PREFAB_ITEMS).transform;
+        }
+   
+        SetViewSprite(i_visualItem);
+
+
     }
 
-    protected virtual string GetPrefabName() { return string.Empty; }
+    //protected virtual string GetPrefabName() { return string.Empty; }
+    protected virtual void GetSpriteItems() { }
+    
 
     public virtual void SetCell(Cell cell)
     {
         Cell = cell;
     }
-
+    
     internal void AnimationMoveToPosition()
     {
         if (View == null) return;
@@ -67,7 +76,6 @@ public class Item
         }
     }
 
-
     public void SetSortingLayerLower()
     {
         if (View == null) return;
@@ -79,6 +87,8 @@ public class Item
         }
 
     }
+
+    
 
     internal void ShowAppearAnimation()
     {
@@ -101,7 +111,8 @@ public class Item
             View.DOScale(0.1f, 0.1f).OnComplete(
                 () =>
                 {
-                    GameObject.Destroy(View.gameObject);
+                    View.gameObject.SetActive(false);
+                    //GameObject.Destroy(View.gameObject);
                     View = null;
                 }
                 );
@@ -132,8 +143,19 @@ public class Item
 
         if (View)
         {
-            GameObject.Destroy(View.gameObject);
+            View.gameObject.SetActive(false);
             View = null;
+        }
+    }
+
+    private void SetViewSprite(Sprite sprite)
+    {
+        if (View == null || sprite == null) return;
+
+        SpriteRenderer sp = View.GetComponent<SpriteRenderer>();
+        if (sp)
+        {
+            sp.sprite = sprite;
         }
     }
 }

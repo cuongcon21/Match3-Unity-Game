@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GameManager : MonoBehaviour
 {
     public event Action<eStateGame> StateChangedAction = delegate { };
@@ -35,13 +36,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    [SerializeField]
+    public GameSettings m_gameSettings;
 
-    private GameSettings m_gameSettings;
+    [SerializeField]
+    public VisualItem m_visualItem;
+
+    [SerializeField]
+    public UIMainManager m_uiMenu;
 
 
     private BoardController m_boardController;
-
-    private UIMainManager m_uiMenu;
 
     private LevelCondition m_levelCondition;
 
@@ -49,9 +54,8 @@ public class GameManager : MonoBehaviour
     {
         State = eStateGame.SETUP;
 
-        m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
+        m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH); // bo
 
-        m_uiMenu = FindObjectOfType<UIMainManager>();
         m_uiMenu.Setup(this);
     }
 
@@ -61,10 +65,12 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        if (m_boardController != null) m_boardController.Update();
-    }
+    //void Update()
+    //{
+    //    //if (m_boardController != null)
+    //    //    if(m_boardController.gameObject.activeSelf)
+    //    //        m_boardController.Update();
+    //}
 
 
     internal void SetState(eStateGame state)
@@ -83,8 +89,10 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(eLevelMode mode)
     {
-        m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
-        m_boardController.StartGame(this, m_gameSettings);
+        GameObject boardController = ObjectPool.Instance.Spawn(Constants.PREFAB_BOARD);
+        m_boardController = boardController.GetComponent<BoardController>();
+        //m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
+        m_boardController.StartGame(this, m_gameSettings,m_visualItem);
 
         if (mode == eLevelMode.MOVES)
         {
@@ -112,7 +120,8 @@ public class GameManager : MonoBehaviour
         if (m_boardController)
         {
             m_boardController.Clear();
-            Destroy(m_boardController.gameObject);
+            //Destroy(m_boardController.gameObject);
+            m_boardController.gameObject.SetActive(false);
             m_boardController = null;
         }
     }
