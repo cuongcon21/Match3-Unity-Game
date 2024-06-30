@@ -17,17 +17,22 @@ public class Item
 
     public virtual void SetView(VisualItem visualItem)
     {
-        if (visualItem)
-        {
-            VisualItem = visualItem;
-            GetSpriteItems();
-        }
+       
+
         if(View == null)
         {
 
             View = ObjectPool.Instance.Spawn(Constants.PREFAB_ITEMS).transform;
         }
-   
+        else
+        {
+            Cell.ExplodeItem();
+        }
+        if (visualItem)
+        {
+            VisualItem = visualItem;
+            GetSpriteItems();
+        }
         SetViewSprite(i_visualItem);
 
 
@@ -104,13 +109,19 @@ public class Item
         return false;
     }
 
+    internal virtual bool IsSameNormalType(NormalItem.eNormalType eNormalType)
+    {
+        return false;
+    }
+
     internal virtual void ExplodeView()
     {
         if (View)
-        {
+        {          
             View.DOScale(0.1f, 0.1f).OnComplete(
                 () =>
                 {
+                    VisualItem.DownNumber(i_visualItem);
                     View.gameObject.SetActive(false);
                     //GameObject.Destroy(View.gameObject);
                     View = null;
@@ -118,6 +129,8 @@ public class Item
                 );
         }
     }
+
+ 
 
 
 

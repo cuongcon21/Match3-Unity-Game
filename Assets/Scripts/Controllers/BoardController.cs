@@ -225,6 +225,7 @@ public class BoardController : MonoBehaviour
             matches[i].ExplodeItem();
         }
 
+
         if(matches.Count > m_gameSettings.MatchesMin)
         {
             m_board.ConvertNormalToBonus(matches, cellEnd);

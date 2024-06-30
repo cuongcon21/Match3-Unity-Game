@@ -119,6 +119,7 @@ public class GameManager : MonoBehaviour
     {
         if (m_boardController)
         {
+            ObjectPool.Instance.OffAll();
             m_boardController.Clear();
             //Destroy(m_boardController.gameObject);
             m_boardController.gameObject.SetActive(false);

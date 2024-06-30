@@ -40,7 +40,7 @@ public class Board
         m_cells = new Cell[boardSizeX, boardSizeY];
 
         CreateBoard(transform);
-
+        visualItems.CleanCountNormal();
         m_visualItems = visualItems;
     
     }
@@ -152,15 +152,42 @@ public class Board
             {
                 Cell cell = m_cells[x, y];
                 if (!cell.IsEmpty) continue;
-
+       
                 NormalItem item = new NormalItem();
 
-                item.SetType(Utils.GetRandomNormalType());
+                List<NormalVisual> normals = m_visualItems.GetMinNormalCount();
+                NormalItem.eNormalType eNormalTypeMin = normals[0].eNormalType;
+                for(int i = 0; i < normals.Count; i++)
+                {
+                    if (cell.NeighbourBottom != null && cell.NeighbourBottom.IsSameTypeNormal(normals[i].eNormalType))
+                    {
+                        continue;
+                    }
+                    if(cell.NeighbourUp !=null && cell.NeighbourUp.IsSameTypeNormal(normals[i].eNormalType))
+                    {
+                        continue;
+                    }
+                    if (cell.NeighbourRight != null && cell.NeighbourRight.IsSameTypeNormal(normals[i].eNormalType))
+                    {
+                        continue;
+                    }
+                    if (cell.NeighbourLeft != null && cell.NeighbourLeft.IsSameTypeNormal(normals[i].eNormalType))
+                    {
+                        continue;
+                    }
+                    eNormalTypeMin = normals[i].eNormalType;
+                    break;
+                }
+                
+                item.SetType(eNormalTypeMin);
+                //item.SetType(Utils.GetRandomNormalType());
                 item.SetView(m_visualItems);
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(true);
+               
+                
             }
         }
     }
@@ -229,7 +256,6 @@ public class Board
         return list;
     }
 
-
     public List<Cell> GetVerticalMatches(Cell cell)
     {
         List<Cell> list = new List<Cell>();
@@ -283,7 +309,8 @@ public class Board
                 item.SetType(BonusItem.eBonusType.VERTICAL);
                 break;
         }
-
+       
+        //Debug.Log("item: " + item.i_visualItem.name);
         if (item != null)
         {
             if (cellToConvert == null)
@@ -304,21 +331,18 @@ public class Board
 
     internal eMatchDirection GetMatchDirection(List<Cell> matches)
     {
-        Debug.Log("match: " + matches.Count);
         if (matches == null || matches.Count < m_matchMin)
         {
            
             return eMatchDirection.NONE;
         }
         var listH = matches.Where(x => x.BoardX == matches[0].BoardX).ToList();
-        Debug.Log("listH: " + listH.Count);
         if (listH.Count == matches.Count)
         {
             return eMatchDirection.VERTICAL;
         }
 
         var listV = matches.Where(x => x.BoardY == matches[0].BoardY).ToList();
-        Debug.Log("listV: " + listV.Count);
         if (listV.Count == matches.Count)
         {
             return eMatchDirection.HORIZONTAL;

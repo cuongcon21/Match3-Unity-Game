@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Cell : MonoBehaviour
@@ -53,7 +54,7 @@ public class Cell : MonoBehaviour
             Item.ShowAppearAnimation();
         }
     }
-
+   
     internal void Clear()
     {
         if (Item != null)
@@ -68,6 +69,10 @@ public class Cell : MonoBehaviour
         return Item != null && other.Item != null && Item.IsSameType(other.Item);
     }
 
+    internal bool IsSameTypeNormal(NormalItem.eNormalType other)
+    {
+        return Item != null  && Item.IsSameNormalType(other);
+    }
     internal void ExplodeItem()
     {
         if (Item == null) return;

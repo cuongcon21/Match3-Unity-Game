@@ -47,6 +47,16 @@ public class ObjectPool : Singleton<ObjectPool>
         return null;
     }
 
+    public void OffAll()
+    {
+        for (int i = 0; i < pooledGobjects.Count; i++)
+        {
+            if (!pooledGobjects[i].activeSelf)
+            {
+                pooledGobjects[i].SetActive (false);
+            }
+        }
+    }
 
     GameObject CreateGobject(GameObject item, string tag)
     {

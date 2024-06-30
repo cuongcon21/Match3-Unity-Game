@@ -26,12 +26,16 @@ public class NormalItem : Item
         if (VisualItem.GetSpriteNormalItem(ItemType))
         {
             i_visualItem = VisualItem.GetSpriteNormalItem(ItemType);
+            VisualItem.UpNumber(ItemType);
         }
       
     }
 
-   
 
+    internal override bool IsSameNormalType(eNormalType eNormalType)
+    {
+        return eNormalType == ItemType;
+    }
 
     internal override bool IsSameType(Item other)
     {
