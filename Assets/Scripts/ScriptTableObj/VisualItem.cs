@@ -28,6 +28,7 @@ public class VisualItem : ScriptableObject
             
         }
     }
+
     public void DownNumber(Sprite nameSprite)
     {
         for (int i = 0; i < normalVisual.Count; i++)
